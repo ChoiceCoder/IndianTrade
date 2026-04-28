@@ -362,10 +362,10 @@ export default function App(){
     <div style={{position:"absolute",bottom:0,left:0,right:0,height:36,display:"flex",alignItems:"center",justifyContent:"space-between",background:"linear-gradient(to right,rgba(0,229,190,0.04),transparent,rgba(255,107,53,0.04))",borderTop:"1px solid rgba(100,140,180,0.08)",zIndex:10,pointerEvents:"none"}}>
       <div style={{display:"flex",alignItems:"center",flex:1}}><div style={{padding:"0 12px",fontSize:9,color:c(EC,0.6),letterSpacing:2,fontWeight:700,borderRight:"1px solid rgba(100,140,180,0.12)",height:36,display:"flex",alignItems:"center",minWidth:46}}>▶ LIVE</div><div style={{padding:"0 14px",fontSize:11,color:"rgba(200,220,255,0.6)",transition:"opacity 0.4s",opacity:tf?1:0}}>{ticks[ti%ticks.length]}</div></div>
       <div style={{fontSize:10,color:"rgba(200,220,255,0.35)",fontFamily:"'JetBrains Mono',monospace",paddingRight:20,whiteSpace:"nowrap"}}>Made with <span style={{color:"#ff4757",fontSize:12}}>♥</span> by <span style={{color:"rgba(200,220,255,0.65)",fontWeight:700}}>ChoiceCoder</span></div></div>
-    {tip&&<TB d={tip.data} prev={tip.prev} x={tip.x} y={tip.y}/>}
+    {tip&&!foc&&<TB d={tip.data} prev={tip.prev} x={tip.x} y={tip.y}/>}
     {foc&&<FP d={foc} prev={pd?.partners?.find(p=>p.id===foc.id)} close={()=>{R.current.fc=-1;setFoc(null);}} yl={yd.label}/>}
     <div style={{position:"absolute",bottom:40,right:18,fontSize:8,color:"rgba(200,220,255,0.25)",letterSpacing:1,zIndex:10,pointerEvents:"none"}}>HOVER to inspect · CLICK to focus</div>
-    <style>{`@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(0,229,190,0.2);border-radius:2px}`}</style>
+    <style>{`@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}@media(max-width:639px){@keyframes slideIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(0,229,190,0.2);border-radius:2px}`}</style>
   </div>);
 }
 
@@ -381,7 +381,10 @@ function TB({d,prev,x,y}){const ec=prev?((d.exports-prev.exports)/prev.exports*1
 function TR({l,v,ch,col}){return<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:3}}><span style={{fontSize:11,color:"rgba(200,220,255,0.5)"}}>{l}</span><div style={{display:"flex",gap:6,alignItems:"center"}}><span style={{fontSize:13,fontWeight:700,color:c(col)}}>{v}</span>{ch!==null&&<span style={{fontSize:9,fontWeight:600,color:ch>=0?c(EC):c(IC)}}>{ch>=0?"▲":"▼"}{Math.abs(ch)}%</span>}</div></div>;}
 
 function FP({d,prev,close,yl}){const ec=prev?((d.exports-prev.exports)/prev.exports*100).toFixed(1):null;const ic=prev?((d.imports-prev.imports)/prev.imports*100).toFixed(1):null;const bal=d.exports-d.imports,tot=d.exports+d.imports,pct=(d.exports/tot*100).toFixed(0);
-  return<div style={{position:"absolute",top:68,right:18,width:270,background:"rgba(8,12,24,0.92)",border:"1px solid rgba(100,140,180,0.15)",borderRadius:12,padding:"16px",zIndex:50,backdropFilter:"blur(16px)",boxShadow:"0 12px 48px rgba(0,0,0,0.5)",animation:"slideIn 0.3s ease",pointerEvents:"auto",maxHeight:"calc(100vh - 140px)",overflowY:"auto"}}>
+  const isMobile=typeof window!=="undefined"&&window.innerWidth<640;
+  return<div style={{position:"absolute",
+    ...(isMobile?{bottom:38,left:8,right:8,top:"auto",width:"auto",maxHeight:"55vh"}:{top:68,right:18,width:270,maxHeight:"calc(100vh - 140px)"}),
+    background:"rgba(8,12,24,0.96)",border:"1px solid rgba(100,140,180,0.15)",borderRadius:12,padding:"16px",zIndex:50,backdropFilter:"blur(16px)",boxShadow:"0 12px 48px rgba(0,0,0,0.5)",animation:"slideIn 0.3s ease",pointerEvents:"auto",overflowY:"auto"}}>
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}><div style={{fontSize:16,fontWeight:700,color:"#fff"}}>{d.name}</div><button onClick={close} style={{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",color:"#fff",borderRadius:6,width:24,height:24,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12}}>✕</button></div>
     <div style={{fontSize:9,color:"rgba(200,220,255,0.35)",letterSpacing:1,marginBottom:8}}>{yl} · Merchandise</div>
     <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:5,marginBottom:10}}><MC l="Exports" v={`$${d.exports}B`} ch={ec} col={EC}/><MC l="Imports" v={`$${d.imports}B`} ch={ic} col={IC}/></div>
